@@ -194,10 +194,11 @@ public class ScrPlay implements Screen, InputProcessor {
             DonkeyKong = animation.getKeyFrame(12);
             nJumps++;
         }
-//        if (DKX + DKSize >= fBarrelX && DKX <= fBarrelX + 60 //HitdectBarrels
-//                && +DKY + DKSize >= fBarrelY && DKY <= fBarrelY + 60) {
-//            dSpeed--;
-//        }
+        if (DKX + DKSize > fBarrelX && DKX < fBarrelX + 50 //HitdectBarrels
+                && + DKY + DKSize - 10 > fBarrelY && DKY + 10 < fBarrelY + 50) {
+           DKX = 0;
+           DKY = 0;
+        }
 // if (DKX + DKSize > platform x && DKX < platformx + plaformwidth &&
 //      +   DKY + DKSize > platform y && DKY < platform y+ plaform height) {  
 //    }
@@ -206,12 +207,12 @@ public class ScrPlay implements Screen, InputProcessor {
 //          }
         if (DKX + DKSize > 0 && DKX < 0 + Gdx.graphics.getWidth() - 100 //Hitdect
                 && +DKY + DKSize > 100 && DKY < 100 + 40) {
-            if (DKX <= Gdx.graphics.getWidth() - 100 && DKY - DKSize >= 70) {
-                DKX = Gdx.graphics.getWidth() - 95;
+            if (DKX >= Gdx.graphics.getWidth() - 101 && DKX <= Gdx.graphics.getWidth() - 100) {
+                DKX+=3;
             }
             if (DKY <= 75) { //bottomhit test
+                dSpeed *= -0.4;
                 DKY = 100 - DKSize;
-                dSpeed *= -1;
             } else if (DKY - DKSize <= 70) { //top hit test
                 DKY++;
                 dSpeed = 0;
@@ -221,7 +222,7 @@ public class ScrPlay implements Screen, InputProcessor {
 
         if (bJump == true) {
             DonkeyKong = animation.getKeyFrame(13);
-            dSpeed = -7 + Gdx.graphics.getDeltaTime() * SpriteSpeed;
+            dSpeed = -6.5 + Gdx.graphics.getDeltaTime() * SpriteSpeed;
             bJump = false;
         }
 
