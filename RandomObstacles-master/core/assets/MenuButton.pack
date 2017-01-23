@@ -1,0 +1,19 @@
+
+humberto sucks.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+MenuButtonDown
+  rotate: false
+  xy: 165, 0
+  size: 165, 64
+  orig: 165, 64
+  offset: 0, 0
+  index: -1
+MenuButtonUp
+  rotate: false
+  xy: 0, 0
+  size: 165, 64
+  orig: 165, 64
+  offset: 0, 0
+  index: -1
