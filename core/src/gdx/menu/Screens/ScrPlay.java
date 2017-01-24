@@ -25,6 +25,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ScrPlay implements Screen, InputProcessor {
+
     Timer tTimer = new Timer();
     GdxMenu gdxMenu;
     TbsMenu tbsMenu;
@@ -75,7 +76,7 @@ public class ScrPlay implements Screen, InputProcessor {
         dSpeed = 0;
         DKX = 0;
         DKY = 0;
-         dBarrelSpeed = 2.5;
+        dBarrelSpeed = 2.5;
         TexWooden = new Texture("platform.png");
         SprWood = new Sprite(TexWooden);
         TexBanana = new Texture("Banana.png");
@@ -129,16 +130,16 @@ public class ScrPlay implements Screen, InputProcessor {
                 && Gdx.input.getY() <= Gdx.graphics.getHeight() && Gdx.input.getX() >= 0) {
             Gdx.input.setCursorCatched(false);
         }
-          
+
     }
 
     public void render(float delta) {
-        TimerTask task = new TimerTask(){
-        public void run() {
-            nSecondspassed++;
-        }
-    }; 
-        tTimer.scheduleAtFixedRate(task, 2000, 1000);
+        TimerTask task = new TimerTask() {
+            public void run() {
+                nSecondspassed++;
+            }
+        };
+        tTimer.scheduleAtFixedRate(task, 1000, 1000);
         for (int i = 0; i <= 5; i++) {
             batch.begin();
 //        batch.draw(sprPlat[1], -20, 100, Gdx.graphics.getWidth() - 50, 40);
@@ -183,14 +184,30 @@ public class ScrPlay implements Screen, InputProcessor {
             fBarrelY = 530;
             dBarrelSpeed = 2.5;
         }
-//      if (nSecondspassed > 3) { //barrelspawning
-//            dBarrelSpeed++; 
-//            bBarrels = true; 
+//        if (nSecondspassed > 3) { //barrelspawning
+//            dBarrelSpeed = 2.5;
+//            bBarrels = true;
 //        }
         int nDie;
         if (bBarrels = true) { // barrelmovement
             fBarrelX -= dBarrelSpeed;
             Barrels = animation1.getKeyFrame(0 + Time1);
+            if (fBarrelX == 150 && fBarrelY >= 390) { 
+                nDie = (int) (Math.random() * 6) + 1;
+                if (nDie <= 2) {
+                    Barrels = animation1.getKeyFrame(0);
+                    dBarrelSpeed = 0;
+                    fBarrelY -= 4;
+                }
+            }
+            if (fBarrelX == 190 && fBarrelY <= 300 && fBarrelY >= 290) { 
+                nDie = (int) (Math.random() * 6) + 1;
+                if (nDie <= 6) {
+                    Barrels = animation1.getKeyFrame(0);
+                    dBarrelSpeed = 0;
+                    fBarrelY += 4;
+                }
+            }
             if (fBarrelX == 30) {
                 dBarrelSpeed = 0;
                 fBarrelY -= 4;
@@ -213,15 +230,8 @@ public class ScrPlay implements Screen, InputProcessor {
                 fBarrelX = 520;
                 fBarrelY = 530;
             }
-            if (fBarrelX == 150 && fBarrelY == 530) {
-                nDie = (int) (Math.random() * 6) + 1;
-                if (nDie == 5) {
-                    Barrels = animation1.getKeyFrame(0);
-                    dBarrelSpeed = 0;
-                    fBarrelY -= 4;
-                }
-            }
         }
+
         if (fBarrelX <= 500 && fBarrelY >= 500) {
             Mario = animation3.getKeyFrame(5);
         }
@@ -276,7 +286,7 @@ public class ScrPlay implements Screen, InputProcessor {
             }
         }
         if (DKX + DKSize - 27 > 70 && DKX < 70 + Gdx.graphics.getWidth() - 75 //Hitdect
-                && + DKY + DKSize > 240 && DKY < 240 + 40) {
+                && +DKY + DKSize > 240 && DKY < 240 + 40) {
             if (DKY <= 205) { //bottomhit test
                 dSpeed *= -0.4;
                 DKY = 220 - DKSize;
@@ -287,7 +297,7 @@ public class ScrPlay implements Screen, InputProcessor {
             }
         }
         if (DKX + DKSize > 0 && DKX < 0 + Gdx.graphics.getWidth() - 75 //Hitdect
-                && + DKY + DKSize > 380 && DKY < 380 + 40) {
+                && +DKY + DKSize > 380 && DKY < 380 + 40) {
             if (DKX >= Gdx.graphics.getWidth() - 101 && DKX <= Gdx.graphics.getWidth() - 100) {
                 DKX += 3;
             }
@@ -301,7 +311,7 @@ public class ScrPlay implements Screen, InputProcessor {
             }
         }
         if (DKX + DKSize - 27 > 70 && DKX < 70 + Gdx.graphics.getWidth() - 75 //Hitdect
-                && + DKY + DKSize > 520 && DKY < 520 + 40) {
+                && +DKY + DKSize > 520 && DKY < 520 + 40) {
             if (DKY <= 495) { //bottomhit test
                 dSpeed *= -0.4;
                 DKY = 510 - DKSize;
@@ -311,9 +321,9 @@ public class ScrPlay implements Screen, InputProcessor {
                 nJumps = 0;
             }
         }
-        if (DKX + DKSize - 27 > Gdx.graphics.getWidth() - 300 && 
-                DKX < Gdx.graphics.getWidth() - 300 + Gdx.graphics.getWidth() - 75 //Hitdect
-                && + DKY + DKSize > 620 && DKY < 620 + 40) {
+        if (DKX + DKSize - 27 > Gdx.graphics.getWidth() - 300
+                && DKX < Gdx.graphics.getWidth() - 300 + Gdx.graphics.getWidth() - 75 //Hitdect
+                && +DKY + DKSize > 620 && DKY < 620 + 40) {
             if (DKY <= 595) { //bottomhit test
                 dSpeed *= -0.4;
                 DKY = 610 - DKSize;
@@ -324,7 +334,7 @@ public class ScrPlay implements Screen, InputProcessor {
             }
         }
         if (DKY >= 500 && DKX >= 525) {
-           DKX-= Gdx.graphics.getDeltaTime() * SpriteSpeed; 
+            DKX -= Gdx.graphics.getDeltaTime() * SpriteSpeed;
         }
         if (bJump == true) {
             DonkeyKong = animation.getKeyFrame(13);
