@@ -21,22 +21,27 @@ import gdx.menu.GdxMenu;
 import gdx.menu.Button;
 import gdx.menu.TbsMenu;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ScrPlay implements Screen, InputProcessor {
-
+    Timer tTimer = new Timer();
     GdxMenu gdxMenu;
     TbsMenu tbsMenu;
     Button tbMenu, tbGameover, tbWin;
     Stage stage;
-    public Music DKMusic;
-    int MOUSEX, MOUSEY;
-    double dBarrelSpeed = 2.5;
+    public Music DKMusic, DKJump, DKHurt, DKWin;
+    int MOUSEX, MOUSEY, nSecondspassed = 0;
+    public int nLives = 3;
+    double dBarrelSpeed;
     SpriteBatch batch;
     BitmapFont screenName;
     Texture TexWooden, TexBanana, texCursor, texCursorPressed, texLadder;
     Sprite SprWood, SprBanana, spCursor, spCursorPressed, spCurrentCursor, spLadder;
+    Platform sprPlat[] = new Platform[5];
+//    Platform = new Sprite(TexWooden);
     double dSpeed = 0, dGravity = 0.15;
-    boolean bJump, bBarrels = false;
+    boolean bJump, bBarrels = false, bDeath = false;
     int nJumps, DKSize = 50;
     float dXstart, dYstart;
     private static final int COLS = 6, COLS1 = 4, COLS3 = 5;
@@ -51,12 +56,15 @@ public class ScrPlay implements Screen, InputProcessor {
     Animation animation, animation1, animation3;
     Sprite aLadders[] = new Sprite[5];
 
-
     public ScrPlay(GdxMenu _gdxMenu) {
         gdxMenu = _gdxMenu;
     }
 
     public void show() {
+        DKJump = Gdx.audio.newMusic(Gdx.files.internal("DKJump.mp3"));
+        DKHurt = Gdx.audio.newMusic(Gdx.files.internal("DKHurt.mp3"));
+        DKMusic = Gdx.audio.newMusic(Gdx.files.internal("Donkey Kong Country OST 3 Simian Segue.mp3"));
+        DKMusic.setLooping(true);
         texCursor = new Texture("DKHammer.png");
         spCursor = new Sprite(texCursor);
         texLadder = new Texture("ladder.png");
@@ -67,6 +75,7 @@ public class ScrPlay implements Screen, InputProcessor {
         dSpeed = 0;
         DKX = 0;
         DKY = 0;
+         dBarrelSpeed = 2.5;
         TexWooden = new Texture("platform.png");
         SprWood = new Sprite(TexWooden);
         TexBanana = new Texture("Banana.png");
@@ -80,8 +89,6 @@ public class ScrPlay implements Screen, InputProcessor {
         tbWin = new Button("WIN", tbsMenu);
         Gdx.input.setInputProcessor(stage);
         btnMenuListener();
-        btnGameoverListener();
-        btnWinListener();
         batch = new SpriteBatch();
         BackGround = new Texture(Gdx.files.internal("back.jpg"));
         Ground = new Texture(Gdx.files.internal("ground.png"));
@@ -117,14 +124,33 @@ public class ScrPlay implements Screen, InputProcessor {
                 animation3 = new Animation(1f, frames3);
             }
         }
+        Gdx.input.setCursorCatched(false);
+        if (Gdx.input.getX() <= Gdx.graphics.getWidth() && Gdx.input.getX() >= 0
+                && Gdx.input.getY() <= Gdx.graphics.getHeight() && Gdx.input.getX() >= 0) {
+            Gdx.input.setCursorCatched(false);
+        }
+          
     }
-//if (dkx + dk width > platform x && dk x < platform x+ plaform width &&
-    // + dk y + dk height > platform y && dk y < platform y+ plaform height) {  
 
     public void render(float delta) {
-        DKMusic = Gdx.audio.newMusic(Gdx.files.internal("Donkey Kong Country OST 3 Simian Segue.mp3"));
-//      DKMusic.setLooping(true);
-//        DKMusic.play();
+        TimerTask task = new TimerTask(){
+        public void run() {
+            nSecondspassed++;
+        }
+    }; 
+        tTimer.scheduleAtFixedRate(task, 2000, 1000);
+        for (int i = 0; i <= 5; i++) {
+            batch.begin();
+//        batch.draw(sprPlat[1], -20, 100, Gdx.graphics.getWidth() - 50, 40);
+//        batch.draw(sprPlat[2], 70, 240, Gdx.graphics.getWidth() - 50, 40);
+//        batch.draw(sprPlat[3], -20, 380, Gdx.graphics.getWidth() - 50, 40);
+//        batch.draw(sprPlat[4], 70, 520, Gdx.graphics.getWidth() - 50, 40);
+//        batch.draw(sprPlat[5], Gdx.graphics.getWidth() - 300, 620, 200, 40);
+            batch.end();
+        }
+        if (!DKMusic.isPlaying() && gdxMenu.currentState == gdxMenu.gameState.PLAY) {
+            DKMusic.play();
+        }
         dXstart = DKX;
         dYstart = DKY;
         if (DKY <= Gdx.graphics.getHeight()) { //Gravity
@@ -147,6 +173,21 @@ public class ScrPlay implements Screen, InputProcessor {
         } else {
             Time3 = 0;
         }
+
+        if (DKX + DKSize >= Gdx.graphics.getWidth() - 240 && DKY + DKSize > 660) {
+            DKMusic.pause();
+            gdxMenu.currentState = gdxMenu.gameState.WIN;
+            gdxMenu.updateState();
+            nLives = 3;
+            fBarrelX = 520;
+            fBarrelY = 530;
+            dBarrelSpeed = 2.5;
+        }
+//      if (nSecondspassed > 3) { //barrelspawning
+//            dBarrelSpeed++; 
+//            bBarrels = true; 
+//        }
+        int nDie;
         if (bBarrels = true) { // barrelmovement
             fBarrelX -= dBarrelSpeed;
             Barrels = animation1.getKeyFrame(0 + Time1);
@@ -159,7 +200,7 @@ public class ScrPlay implements Screen, InputProcessor {
                 dBarrelSpeed = -2.5;
                 Barrels = animation1.getKeyFrame(0 + Time1);
             }
-            if (fBarrelX == Gdx.graphics.getWidth() - 100) {
+            if (fBarrelX == Gdx.graphics.getWidth() - 100 && fBarrelY <= 400) {
                 dBarrelSpeed = 0;
                 fBarrelY -= 4;
                 Barrels = animation1.getKeyFrame(0);
@@ -171,7 +212,14 @@ public class ScrPlay implements Screen, InputProcessor {
             if (fBarrelX <= -50) {
                 fBarrelX = 520;
                 fBarrelY = 530;
-
+            }
+            if (fBarrelX == 150 && fBarrelY == 530) {
+                nDie = (int) (Math.random() * 6) + 1;
+                if (nDie == 5) {
+                    Barrels = animation1.getKeyFrame(0);
+                    dBarrelSpeed = 0;
+                    fBarrelY -= 4;
+                }
             }
         }
         if (fBarrelX <= 500 && fBarrelY >= 500) {
@@ -189,15 +237,23 @@ public class ScrPlay implements Screen, InputProcessor {
             DonkeyKong = animation.getKeyFrame(0 + Time);
             bBarrels = true;
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.DPAD_UP) && DKY < Gdx.graphics.getHeight() && nJumps == 0) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DPAD_UP) && DKY < Gdx.graphics.getHeight() /*&& nJumps == 0*/) {
             bJump = true;
-            DonkeyKong = animation.getKeyFrame(12);
             nJumps++;
+            DKJump.play();
         }
-        if (DKX + DKSize > fBarrelX && DKX < fBarrelX + 50 //HitdectBarrels
-                && + DKY + DKSize - 10 > fBarrelY && DKY + 10 < fBarrelY + 50) {
-           DKX = 0;
-           DKY = 0;
+        if (DKX + (DKSize / 2) > fBarrelX && DKX < fBarrelX + 50 //HitdectBarrels
+                && +DKY + DKSize - 10 > fBarrelY && DKY + 10 < fBarrelY + 50) {
+            DKX = 0;
+            DKY = 0;
+            DKHurt.play();
+            nLives--;
+            fBarrelX = 520;
+            fBarrelY = 530;
+            dBarrelSpeed = 2.5;
+        }
+        if (dSpeed >= 0 && nJumps != 0) {
+            DonkeyKong = animation.getKeyFrame(13);
         }
 // if (DKX + DKSize > platform x && DKX < platformx + plaformwidth &&
 //      +   DKY + DKSize > platform y && DKY < platform y+ plaform height) {  
@@ -205,10 +261,10 @@ public class ScrPlay implements Screen, InputProcessor {
 //if (DKX + DKSize > SprWood.getOriginX() && DKX < SprWood.getOriginX() + SprWood.getWidth() //Hitdect
 //                && + DKY + DKSize > SprWood.getOriginY() && DKY < SprWood.getOriginY() + SprWood.getHeight()) {
 //          }
-        if (DKX + DKSize > 0 && DKX < 0 + Gdx.graphics.getWidth() - 100 //Hitdect
+        if (DKX + DKSize > 0 && DKX < 0 + Gdx.graphics.getWidth() - 75 //Hitdect
                 && +DKY + DKSize > 100 && DKY < 100 + 40) {
             if (DKX >= Gdx.graphics.getWidth() - 101 && DKX <= Gdx.graphics.getWidth() - 100) {
-                DKX+=3;
+                DKX += 3;
             }
             if (DKY <= 75) { //bottomhit test
                 dSpeed *= -0.4;
@@ -219,7 +275,57 @@ public class ScrPlay implements Screen, InputProcessor {
                 nJumps = 0;
             }
         }
-
+        if (DKX + DKSize - 27 > 70 && DKX < 70 + Gdx.graphics.getWidth() - 75 //Hitdect
+                && + DKY + DKSize > 240 && DKY < 240 + 40) {
+            if (DKY <= 205) { //bottomhit test
+                dSpeed *= -0.4;
+                DKY = 220 - DKSize;
+            } else if (DKY - DKSize <= 210) { //top hit test
+                DKY++;
+                dSpeed = 0;
+                nJumps = 0;
+            }
+        }
+        if (DKX + DKSize > 0 && DKX < 0 + Gdx.graphics.getWidth() - 75 //Hitdect
+                && + DKY + DKSize > 380 && DKY < 380 + 40) {
+            if (DKX >= Gdx.graphics.getWidth() - 101 && DKX <= Gdx.graphics.getWidth() - 100) {
+                DKX += 3;
+            }
+            if (DKY <= 345) { //bottomhit test
+                dSpeed *= -0.4;
+                DKY = 360 - DKSize;
+            } else if (DKY - DKSize <= 350) { //top hit test
+                DKY++;
+                dSpeed = 0;
+                nJumps = 0;
+            }
+        }
+        if (DKX + DKSize - 27 > 70 && DKX < 70 + Gdx.graphics.getWidth() - 75 //Hitdect
+                && + DKY + DKSize > 520 && DKY < 520 + 40) {
+            if (DKY <= 495) { //bottomhit test
+                dSpeed *= -0.4;
+                DKY = 510 - DKSize;
+            } else if (DKY - DKSize <= 490) { //top hit test
+                DKY++;
+                dSpeed = 0;
+                nJumps = 0;
+            }
+        }
+        if (DKX + DKSize - 27 > Gdx.graphics.getWidth() - 300 && 
+                DKX < Gdx.graphics.getWidth() - 300 + Gdx.graphics.getWidth() - 75 //Hitdect
+                && + DKY + DKSize > 620 && DKY < 620 + 40) {
+            if (DKY <= 595) { //bottomhit test
+                dSpeed *= -0.4;
+                DKY = 610 - DKSize;
+            } else if (DKY - DKSize <= 590) { //top hit test
+                DKY++;
+                dSpeed = 0;
+                nJumps = 0;
+            }
+        }
+        if (DKY >= 500 && DKX >= 525) {
+           DKX-= Gdx.graphics.getDeltaTime() * SpriteSpeed; 
+        }
         if (bJump == true) {
             DonkeyKong = animation.getKeyFrame(13);
             dSpeed = -6.5 + Gdx.graphics.getDeltaTime() * SpriteSpeed;
@@ -232,6 +338,14 @@ public class ScrPlay implements Screen, InputProcessor {
         }
         if (DKX >= Gdx.graphics.getWidth() - 50) {
             DKX = Gdx.graphics.getWidth() - 50;
+        }
+
+        if (nLives == 0) {
+            DKMusic.pause();
+            gdxMenu.currentState = gdxMenu.gameState.OVER;
+            gdxMenu.updateState();
+            nLives = 3;
+            bDeath = false;
         }
         batch.begin();
         batch.draw(BackGround, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -270,28 +384,10 @@ public class ScrPlay implements Screen, InputProcessor {
         batch.end();
     }
 
-    public void btnGameoverListener() {
-        tbGameover.addListener(new ChangeListener() {
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                gdxMenu.currentState = gdxMenu.gameState.OVER;
-                gdxMenu.updateState();
-            }
-        });
-    }
-
     public void btnMenuListener() {
         tbMenu.addListener(new ChangeListener() {
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 gdxMenu.currentState = gdxMenu.gameState.MENU;
-                gdxMenu.updateState();
-            }
-        });
-    }
-
-    public void btnWinListener() {
-        tbWin.addListener(new ChangeListener() {
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                gdxMenu.currentState = gdxMenu.gameState.WIN;
                 gdxMenu.updateState();
             }
         });

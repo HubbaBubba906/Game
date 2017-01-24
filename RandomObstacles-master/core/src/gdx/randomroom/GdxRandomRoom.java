@@ -34,7 +34,6 @@ public class GdxRandomRoom extends ApplicationAdapter implements InputProcessor 
             arsprRock[i].setSize(400, 100);
             fRX=RockX();
             fRY=RockY();
-             
             arsprRock[i].setPosition(fRX, fRY);
         }
         arsprRock[0].setSize(30, 600);

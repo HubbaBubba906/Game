@@ -3,6 +3,7 @@ package gdx.menu.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,7 +17,7 @@ import gdx.menu.Button;
 import gdx.menu.TbsMenu;
 
 public class ScrWin implements Screen, InputProcessor {
-
+    Music DKWin;
     GdxMenu gdxMenu;
     TbsMenu tbsMenu;
     Button tbMenu;
@@ -31,9 +32,10 @@ public class ScrWin implements Screen, InputProcessor {
     }
 
     public void show() {
-        imgCursor = new Texture("DKHammer.png"); 
+        DKWin = Gdx.audio.newMusic(Gdx.files.internal("DKWin.mp3"));
+        imgCursor = new Texture("DKHammer.png");
         spCursor = new Sprite(imgCursor);
-        texWin = new Texture("youwin.png"); 
+        texWin = new Texture("youwin.png");
         spWin = new Sprite(texWin);
         TexTutorial = new Texture("Donkey_Kong.png");
         SprTutorial = new Sprite(TexTutorial);
@@ -56,13 +58,16 @@ public class ScrWin implements Screen, InputProcessor {
     }
 
     public void render(float delta) {
-        Gdx.gl.glClearColor(210,105,30,56);
+        if (!DKWin.isPlaying() && gdxMenu.currentState == gdxMenu.gameState.WIN) {
+            DKWin.play();
+        }
+        Gdx.gl.glClearColor(210, 105, 30, 56);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         batch.draw(sprBackGround, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.draw(SprTutorial, 200, 280, 350, 450);
         batch.draw(SprArrow, 0, 0, Gdx.graphics.getWidth(), 570);
-        batch.draw(spWin, 0, 170, Gdx.graphics.getWidth()- 10, 300);
+        batch.draw(spWin, 0, 170, Gdx.graphics.getWidth() - 10, 300);
         batch.end();
         stage.act();
         stage.draw();
@@ -76,6 +81,7 @@ public class ScrWin implements Screen, InputProcessor {
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 gdxMenu.currentState = gdxMenu.gameState.MENU;
                 gdxMenu.updateState();
+                DKWin.pause();
             }
         });
     }

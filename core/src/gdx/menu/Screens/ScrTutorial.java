@@ -16,7 +16,6 @@ import gdx.menu.Button;
 import gdx.menu.TbsMenu;
 
 public class ScrTutorial implements Screen, InputProcessor {
-
     GdxMenu gdxMenu;
     TbsMenu tbsMenu;
     Button tbMenu;

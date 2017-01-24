@@ -3,6 +3,7 @@ package gdx.menu.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -17,10 +18,13 @@ import gdx.menu.Button;
 import gdx.menu.TbsMenu;
 
 public class ScrGameover implements Screen, InputProcessor {
+
+    Music DKDeath;
     GdxMenu gdxMenu;
     TbsMenu tbsMenu;
     Button tbPlay, tbMenu;
     Stage stage;
+    int nPlayMusic = 0;
     SpriteBatch batch;
     BitmapFont screenName;
     Texture TexGameover, imgCursor;
@@ -31,6 +35,7 @@ public class ScrGameover implements Screen, InputProcessor {
     }
 
     public void show() {
+        DKDeath = Gdx.audio.newMusic(Gdx.files.internal("DKDeath.mp3"));
         imgCursor = new Texture("DKHammer.png");
         spCursor = new Sprite(imgCursor);
         TexGameover = new Texture("DKGameOver.jpg");
@@ -53,10 +58,13 @@ public class ScrGameover implements Screen, InputProcessor {
     }
 
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1); 
+        if (!DKDeath.isPlaying() && nPlayMusic == 0 && gdxMenu.currentState == gdxMenu.gameState.OVER) {
+            DKDeath.play();
+        }
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(sprGameover, -40, 50, Gdx.graphics.getWidth() + 100, Gdx.graphics.getHeight()- 100);
+        batch.draw(sprGameover, -40, 50, Gdx.graphics.getWidth() + 100, Gdx.graphics.getHeight() - 100);
         batch.end();
         stage.act();
         stage.draw();
@@ -68,6 +76,7 @@ public class ScrGameover implements Screen, InputProcessor {
     public void btnMenuListener() {
         tbMenu.addListener(new ChangeListener() {
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                DKDeath.pause();
                 gdxMenu.currentState = gdxMenu.gameState.MENU;
                 gdxMenu.updateState();
             }
@@ -77,10 +86,10 @@ public class ScrGameover implements Screen, InputProcessor {
     public void btnPlayListener() {
         tbPlay.addListener(new ChangeListener() {
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                DKDeath.pause();
                 gdxMenu.currentState = gdxMenu.gameState.PLAY;
                 gdxMenu.updateState();
             }
-            
         });
     }
 
