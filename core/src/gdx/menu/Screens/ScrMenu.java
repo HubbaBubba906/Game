@@ -77,7 +77,7 @@ public class ScrMenu implements Screen, InputProcessor {
     public void btnPlayListener() {
         tbPlay.addListener(new ChangeListener() {
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                DKMenu.pause();
+                DKMenu.stop();
                 gdxMenu.currentState = gdxMenu.gameState.PLAY;
                 gdxMenu.updateState();
                 nPlayMusic = 0;

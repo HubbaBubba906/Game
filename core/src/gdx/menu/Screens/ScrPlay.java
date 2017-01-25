@@ -37,9 +37,11 @@ public class ScrPlay implements Screen, InputProcessor {
     double dBarrelSpeed;
     SpriteBatch batch;
     BitmapFont screenName;
-    Texture TexWooden, TexBanana, texCursor, texCursorPressed, texLadder;
-    Sprite SprWood, SprBanana, spCursor, spCursorPressed, spCurrentCursor, spLadder;
-    Platform sprPlat[] = new Platform[5];
+    Texture TexWooden, TexBanana, texCursor, texCursorPressed, texLadder, 
+            texX3, texX2, texX1, texHeart;
+    Sprite SprWood, SprBanana, spCursor, spCursorPressed, spCurrentCursor, 
+            spLadder, spX3, spX2, spX1, spHeart;
+    Platform sprBarrel[] = new Platform[5];
 //    Platform = new Sprite(TexWooden);
     double dSpeed = 0, dGravity = 0.15;
     boolean bJump, bBarrels = false, bDeath = false;
@@ -68,6 +70,14 @@ public class ScrPlay implements Screen, InputProcessor {
         DKMusic.setLooping(true);
         texCursor = new Texture("DKHammer.png");
         spCursor = new Sprite(texCursor);
+        texHeart = new Texture("heart.png");
+        spHeart = new Sprite(texHeart);
+        texX3 = new Texture("3 X.png");
+        spX3 = new Sprite(texX3);
+        texX2 = new Texture("2 X.png");
+        spX2 = new Sprite(texX2);
+        texX1 = new Texture("1 X.png");
+        spX1 = new Sprite(texX1);
         texLadder = new Texture("ladder.png");
         spLadder = new Sprite(texLadder);
         texCursorPressed = new Texture("DKHammer flat.png");
@@ -142,11 +152,11 @@ public class ScrPlay implements Screen, InputProcessor {
         tTimer.scheduleAtFixedRate(task, 1000, 1000);
         for (int i = 0; i <= 5; i++) {
             batch.begin();
-//        batch.draw(sprPlat[1], -20, 100, Gdx.graphics.getWidth() - 50, 40);
-//        batch.draw(sprPlat[2], 70, 240, Gdx.graphics.getWidth() - 50, 40);
-//        batch.draw(sprPlat[3], -20, 380, Gdx.graphics.getWidth() - 50, 40);
-//        batch.draw(sprPlat[4], 70, 520, Gdx.graphics.getWidth() - 50, 40);
-//        batch.draw(sprPlat[5], Gdx.graphics.getWidth() - 300, 620, 200, 40);
+//        batch.draw(sprBarrel[1], -20, 100, Gdx.graphics.getWidth() - 50, 40);
+//        batch.draw(sprBarrel[2], 70, 240, Gdx.graphics.getWidth() - 50, 40);
+//        batch.draw(sprBarrel[3], -20, 380, Gdx.graphics.getWidth() - 50, 40);
+//        batch.draw(sprBarrel[4], 70, 520, Gdx.graphics.getWidth() - 50, 40);
+//        batch.draw(sprBarrel[5], Gdx.graphics.getWidth() - 300, 620, 200, 40);
             batch.end();
         }
         if (!DKMusic.isPlaying() && gdxMenu.currentState == gdxMenu.gameState.PLAY) {
@@ -192,20 +202,25 @@ public class ScrPlay implements Screen, InputProcessor {
         if (bBarrels = true) { // barrelmovement
             fBarrelX -= dBarrelSpeed;
             Barrels = animation1.getKeyFrame(0 + Time1);
-            if (fBarrelX == 150 && fBarrelY >= 390) { 
-                nDie = (int) (Math.random() * 6) + 1;
-                if (nDie <= 2) {
-                    Barrels = animation1.getKeyFrame(0);
+            if (fBarrelX == 150 && fBarrelY >= 391|| 
+                    fBarrelX == 500 && fBarrelY <= 124 && fBarrelY >= -10) {
+                nDie = (int) (Math.random() * 10) + 1;
+                Barrels = animation1.getKeyFrame(0);
+                if (nDie <= 4) {
+                    fBarrelY -= 5;
                     dBarrelSpeed = 0;
-                    fBarrelY -= 4;
                 }
             }
-            if (fBarrelX == 190 && fBarrelY <= 300 && fBarrelY >= 290) { 
-                nDie = (int) (Math.random() * 6) + 1;
-                if (nDie <= 6) {
-                    Barrels = animation1.getKeyFrame(0);
+            if (fBarrelX == 180 && fBarrelY <= 390 && fBarrelY >= 254 ||
+                    fBarrelX == 380 && fBarrelY <= 390 && fBarrelY >= 254 || 
+                    fBarrelX == 270 && fBarrelY <= 254 && fBarrelY >= 114 || 
+                    fBarrelX == 460 && fBarrelY <= 254 && fBarrelY >= 114) { 
+                nDie = (int) (Math.random() * 10) + 1;
+                Barrels = animation1.getKeyFrame(0);
+                if (nDie <= 3) {
+                    
                     dBarrelSpeed = 0;
-                    fBarrelY += 4;
+                    fBarrelY -= 5;
                 }
             }
             if (fBarrelX == 30) {
@@ -247,7 +262,7 @@ public class ScrPlay implements Screen, InputProcessor {
             DonkeyKong = animation.getKeyFrame(0 + Time);
             bBarrels = true;
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.DPAD_UP) && DKY < Gdx.graphics.getHeight() /*&& nJumps == 0*/) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DPAD_UP) && DKY < Gdx.graphics.getHeight() && nJumps == 0) {
             bJump = true;
             nJumps++;
             DKJump.play();
@@ -273,8 +288,8 @@ public class ScrPlay implements Screen, InputProcessor {
 //          }
         if (DKX + DKSize > 0 && DKX < 0 + Gdx.graphics.getWidth() - 75 //Hitdect
                 && +DKY + DKSize > 100 && DKY < 100 + 40) {
-            if (DKX >= Gdx.graphics.getWidth() - 101 && DKX <= Gdx.graphics.getWidth() - 100) {
-                DKX += 3;
+            if (DKX <= Gdx.graphics.getWidth() - 101 && DKX <= Gdx.graphics.getWidth() - 100 && DKY <= 90) {
+                DKX += Gdx.graphics.getDeltaTime() * SpriteSpeed;
             }
             if (DKY <= 75) { //bottomhit test
                 dSpeed *= -0.4;
@@ -357,8 +372,17 @@ public class ScrPlay implements Screen, InputProcessor {
             nLives = 3;
             bDeath = false;
         }
+        
         batch.begin();
         batch.draw(BackGround, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        if (nLives == 3) {
+             batch.draw(spX3, 80, Gdx.graphics.getWidth() - 85, 150, 150);
+        }else if (nLives == 2) {
+             batch.draw(spX2, 80, Gdx.graphics.getWidth() - 85, 150, 150);
+        }else if (nLives == 1) {
+             batch.draw(spX1, 80, Gdx.graphics.getWidth() - 85, 150, 150);
+        }
+        batch.draw(spHeart, 5, Gdx.graphics.getWidth() - 55, 90, 90);
         batch.draw(Ground, 0, 0, Gdx.graphics.getWidth(), 10);
         batch.draw(SprBanana, Gdx.graphics.getWidth() - 240, 660, 70, 70);
         batch.draw(SprWood, -20, 100, Gdx.graphics.getWidth() - 50, 40);

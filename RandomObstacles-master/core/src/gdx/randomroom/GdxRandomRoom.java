@@ -89,7 +89,7 @@ public class GdxRandomRoom extends ApplicationAdapter implements InputProcessor 
         batch.begin();
         batch.draw(txBG, 0, 0, 1200, 600);
         batch.draw(DKSprite, Math.round((float) sprHero.DKX), Math.round((float) sprHero.DKY), 70, 70);
-        for (int i = 4; i < 9; i++) {
+        for (int i = 0; i < 5; i++) {
             batch.draw(txRock, arsprRock[i].getX(), arsprRock[i].getY(), 400, 100);
         }
         batch.end();
